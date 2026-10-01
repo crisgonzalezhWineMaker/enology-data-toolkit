@@ -50,6 +50,42 @@ def calcular_acido_tartarico(volumen_l: float, acidez_actual: float, acidez_obje
         "dosis_g_l": delta_acidez
     }
 
+def calcular_acidez_total_titulacion(ml_naoh: float) -> float:
+    """Fórmula volumétrica: Acidez Total (g/L Ácido Tartárico) = n * 0.75"""
+    return round(ml_naoh * 0.75, 2)
+
+def calcular_indices_glories(a420: float, a520: float, a620: float) -> dict:
+    """
+    Método de Glories:
+    Intensidad Colorante (IC) = A420 + A520 + A620
+    Tonalidad (N) = (A420 / A520) * 100
+    """
+    ic = a420 + a520 + a620
+    tonalidad = (a420 / a520) * 100.0 if a520 > 0 else 0.0
+    comp_amarillo = (a420 / ic) * 100.0 if ic > 0 else 0.0
+    comp_rojo = (a520 / ic) * 100.0 if ic > 0 else 0.0
+    comp_azul = (a620 / ic) * 100.0 if ic > 0 else 0.0
+    return {
+        "intensidad_colorante": round(ic, 3),
+        "tonalidad": round(tonalidad, 2),
+        "pct_amarillo": round(comp_amarillo, 1),
+        "pct_rojo": round(comp_rojo, 1),
+        "pct_azul": round(comp_azul, 1)
+    }
+
+def calcular_antocianos_totales(a520: float, factor_dilucion: float = 1.0) -> float:
+    """Fórmula Puissant-León: Antocianos (mg/L) = A520 * 20 * Factor Dilución"""
+    return round(a520 * 20.0 * factor_dilucion, 1)
+
+def calcular_taninos_condensados(a1: float, a2: float) -> float:
+    """
+    Método de hidrólisis ácida a 100°C:
+    Taninos Condensados (g/L) = (A1 - A2) * 19.33
+    Donde A1 es absorbancia tras tubo a 100°C y A2 es el testigo a temperatura ambiente.
+    """
+    return round(max(0.0, (a1 - a2) * 19.33), 2)
+
+
 def calcular_nutricion_nitrogenada(
     volumen_hl: float, 
     yan_actual: float, 
